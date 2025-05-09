@@ -1,13 +1,11 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { ComponentExtractor } from './ComponentExtractor';
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+
+import { UsageExtractor } from './UsageExtractor';
+import { TreeProvider } from './TreeProvider';
+
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	let disposable = vscode.commands.registerCommand('component_element_usage.findComponentUsage', async () => {
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) {
@@ -15,35 +13,40 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 
+		vscode.commands.registerCommand('component.openFile', async (uri: vscode.Uri, line: number) => {
+			const doc = await vscode.workspace.openTextDocument(uri);
+			const editor = await vscode.window.showTextDocument(doc, { preview: false });
+			const position = new vscode.Position(line, 0);
+			editor.selection = new vscode.Selection(position, position);
+			editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter);
+		})
+
 		const document = editor.document;
 		const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
 		if (!workspaceFolder) {
 			vscode.window.showInformationMessage('No workspace folder found');
 			return;
 		}
+		console.log('[Angular Components Finder] finding components and processing them');
 		const fileExtractor = new ComponentExtractor(workspaceFolder.uri.fsPath);
-		var components = await fileExtractor.FindAllSelectors();
+		var components = fileExtractor.FindAllSelectors();
 
+		console.log(`[Angular Components Finder] found ${components.length}`);
+		const usageExtractor = new UsageExtractor(workspaceFolder.uri.fsPath, components);
+		var componentsWithUsages = await usageExtractor.findUsedSelectors();
 		
+		console.log(`[Angular Components Finder] found ${componentsWithUsages.length} with no references`);
+		const fileTreeDataProvider = new TreeProvider(componentsWithUsages);
+		vscode.window.createTreeView(
+			"elementUsageExplorer",
+			{
+				treeDataProvider: fileTreeDataProvider,
+				showCollapseAll: true,
+				
+			}
+		);
 
-		// const fileTreeDataProvider = new FileTreeDataProvider();
-		// vscode.window.createTreeView(
-		// 	"elementUsageExplorer",
-		// 	{
-		// 		treeDataProvider: fileTreeDataProvider,
-		// 		showCollapseAll: true
-		// 	}
-		// );
 
-		// fileTreeDataProvider.showLoading();
-
-		// setTimeout(() => {
-		// 	fileTreeDataProvider.showResults(usages);
-		// 	// Show the tree view in the explorer
-		// 	vscode.commands.executeCommand('workbench.view.explorer');
-		// 	// Move focus to the tree view
-		// 	vscode.commands.executeCommand('elementUsageExplorer.focus');
-		// }, 100);
 	});
 	context.subscriptions.push(disposable);
 }

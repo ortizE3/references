@@ -3,6 +3,7 @@ import vscode from 'vscode';
 
 export class FileHelper {
     private static IGNORE_PATTERNS = [
+        'deleteConfigs/**',
         'node_modules/**',
         'dist/**',
         'out/**',
@@ -20,8 +21,8 @@ export class FileHelper {
         return Buffer.from(content).toString("utf8");
     }
 
-    public static GetComponentFiles(rootPath: string): string[] {
-        const componentFiles = glob.sync('**/*.{ts,html}', {
+    public static GetComponentFiles(rootPath: string, pattern :string): string[] {
+        const componentFiles = glob.sync(`**/*.{${pattern}}`, {
             cwd: rootPath,
             ignore: this.IGNORE_PATTERNS
         });

@@ -25,6 +25,10 @@
       {
         "command": "component_element_usage.findComponentUsage",
         "title": "Find Component Usages"
+      },
+      {
+        "command": "component.openFile",
+        "title": "Open File"
       }
     ],
     "views": {

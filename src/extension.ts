@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { ComponentExtractor } from './ComponentExtractor';
+import { ComponentExtractor } from './Extractors/ComponentExtractor';
 
-import { UsageExtractor } from './UsageExtractor';
+import { UsageExtractor } from './Extractors/UsageExtractor';
 import { TreeProvider } from './TreeProvider';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 			const position = new vscode.Position(line, 0);
 			editor.selection = new vscode.Selection(position, position);
 			editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter);
-		})
+		});
 
 		const document = editor.document;
 		const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
@@ -32,9 +32,9 @@ export function activate(context: vscode.ExtensionContext) {
 		var components = fileExtractor.FindAllSelectors();
 
 		console.log(`[Angular Components Finder] found ${components.length}`);
-		const usageExtractor = new UsageExtractor(workspaceFolder.uri.fsPath, components);
+		const usageExtractor = new UsageExtractor(workspaceFolder.uri.fsPath, components, []);
 		var componentsWithUsages = await usageExtractor.findUsedSelectors();
-		
+
 		console.log(`[Angular Components Finder] found ${componentsWithUsages.length} with no references`);
 		const fileTreeDataProvider = new TreeProvider(componentsWithUsages);
 		vscode.window.createTreeView(
@@ -42,11 +42,8 @@ export function activate(context: vscode.ExtensionContext) {
 			{
 				treeDataProvider: fileTreeDataProvider,
 				showCollapseAll: true,
-				
 			}
 		);
-
-
 	});
 	context.subscriptions.push(disposable);
 }

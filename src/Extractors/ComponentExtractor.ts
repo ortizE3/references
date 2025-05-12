@@ -1,6 +1,6 @@
 import * as path from "path";
-import { Component } from "./Component";
-import { FileHelper } from "./FileHelper";
+import { Component } from "../Component";
+import { FileHelper } from "../FileHelper";
 import { ObjectLiteralExpression, Project, SyntaxKind } from "ts-morph";
 import { TreeItemCollapsibleState } from "vscode";
 export class ComponentExtractor {
@@ -29,7 +29,7 @@ export class ComponentExtractor {
                                 const selector = objLiteral.getProperty('selector');
                                 if (selector) {
                                     const selectorPropertyAssignment = selector.asKind(SyntaxKind.PropertyAssignment);
-                                    if(selectorPropertyAssignment) {
+                                    if (selectorPropertyAssignment) {
                                         const selectorValue = selectorPropertyAssignment.getInitializer()?.getText().replace(/'/g, '').replace(/"/g, '');
                                         const className = sourceClass.getName();
                                         const fileName = path.basename(file);
@@ -55,11 +55,4 @@ export class ComponentExtractor {
         }
         return this.components;
     }
-
-    extractComponentSelector(fileContent: string): string {
-        const regex = /@Component\(\s*{[^}]*?\bselector:\s*'([^']*)'/;
-        const match = fileContent.match(regex);
-        return match ? ("<" + match[1]) : "";
-    }
-
 }

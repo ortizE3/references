@@ -18,6 +18,11 @@
           "command": "component_element_usage.findComponentUsage",
           "group": "0_navigation@3",
           "when": "editorLangId == 'typescript'"
+        },
+        {
+          "command": "service_element_usage.findServiceUsage",
+          "group": "0_navigation@3",
+          "when": "editorLangId == 'typescript'"
         }
       ]
     },
@@ -25,6 +30,10 @@
       {
         "command": "component_element_usage.findComponentUsage",
         "title": "Find Component Usages"
+      },
+      {
+        "command": "service_element_usage.findServiceUsage",
+        "title": "Find Service Usages"
       },
       {
         "command": "component.openFile",

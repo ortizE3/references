@@ -21,10 +21,19 @@ export class ServiceExtractor {
             const normalizedPath = FileHelper.normalizePath(filePath);
             const sourceFile = project.addSourceFileAtPath(normalizedPath);
             const classes = sourceFile.getClasses();
-
+            
             for (const sourceClass of classes) {
                 const decorator = sourceClass.getDecorator('Injectable');
                 if (decorator) {
+                    //TODO we need to figure out how to get references from constructor
+                    // const constructors = sourceClass.getConstructors();
+                    // for (const constructor of constructors) {
+                    //     const parameters = constructor.getParameters();
+                    //     for (const parameter of parameters) {
+                    //         let constructorParamName = parameter.getName();
+                    //     }
+                    // }
+
                     const className = sourceClass.getName();
                     const fileName = path.basename(file);
 

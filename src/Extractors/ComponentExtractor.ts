@@ -12,7 +12,7 @@ export class ComponentExtractor {
 
     public FindAllSelectors(): Component[] {
         const project = new Project();
-        const componentFiles = FileHelper.GetComponentFiles(this.rootPath, 'ts,html');
+        const componentFiles = FileHelper.GetComponentFiles(this.rootPath, '{ts,html}');
         for (const file of componentFiles) {
             if (file.endsWith('.ts')) {
                 const filePath = path.join(this.rootPath, file);

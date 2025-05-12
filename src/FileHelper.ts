@@ -28,7 +28,8 @@ export class FileHelper {
     }
 
     public static GetComponentFiles(rootPath: string, pattern: string): string[] {
-        const componentFiles = glob.sync(`**/*.{${pattern}}`, {
+        let globPattern = `**/*.${pattern}`;
+        const componentFiles = glob.sync(globPattern, {
             cwd: rootPath,
             ignore: this.IGNORE_PATTERNS,
         });

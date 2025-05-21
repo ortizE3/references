@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Component } from './Component';
+import { Component } from './Models/Component';
 
 export class TreeProvider implements vscode.TreeDataProvider<Component> {
     components: Component[];

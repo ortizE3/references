@@ -1,5 +1,5 @@
 import * as path from "path";
-import { Component } from "../Component";
+import { Component } from "../Models/Component";
 import { FileHelper } from "../FileHelper";
 import { ObjectLiteralExpression, Project, SyntaxKind } from "ts-morph";
 import { TreeItemCollapsibleState } from "vscode";

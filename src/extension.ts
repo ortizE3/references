@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import { ComponentExtractor } from './Extractors/ComponentExtractor';
 
-import { UsageExtractor } from './Extractors/UsageExtractor';
+import { ComponentUsageExtractor } from './Extractors/ComponentUsageExtractor';
 import { TreeProvider } from './TreeProvider';
 import { ServiceExtractor } from './Extractors/ServiceExtractor';
+import { ServiceUsageExtractor } from './Extractors/ServiceUsageExtractor';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -33,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
 		var components = fileExtractor.FindAllSelectors();
 
 		console.log(`[Angular Components Finder] found ${components.length}`);
-		const usageExtractor = new UsageExtractor(workspaceFolder.uri.fsPath, components, []);
+		const usageExtractor = new ComponentUsageExtractor(workspaceFolder.uri.fsPath, components, new Map());
 		var componentsWithUsages = await usageExtractor.findUsedSelectors();
 
 		console.log(`[Angular Components Finder] found ${componentsWithUsages.length} with no references`);
@@ -60,16 +61,16 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.showInformationMessage('No workspace folder found');
 			return;
 		}
-		console.log('[Angular Service Finder] finding components and processing them');
+		console.log('[Angular Service Finder] finding services and processing them');
 		const fileExtractor = new ServiceExtractor(workspaceFolder.uri.fsPath);
-		var services = fileExtractor.FindAllServices();
+		var servicesFound = fileExtractor.FindAllServices();
 
-		console.log(`[Angular Service Finder] found ${services.length}`);
-		const usageExtractor = new UsageExtractor(workspaceFolder.uri.fsPath, [], services);
+		console.log(`[Angular Service Finder] found ${servicesFound.services.size}`);
+		const usageExtractor = new ServiceUsageExtractor(workspaceFolder.uri.fsPath, servicesFound.project, servicesFound.services);
 		var serviceWithUsages = await usageExtractor.findUsedServices();
 
-		console.log(`[Angular Service Finder] found ${serviceWithUsages.length} with no references`);
-		const fileTreeDataProvider = new TreeProvider(serviceWithUsages);
+		console.log(`[Angular Service Finder] found ${serviceWithUsages.size} with no references`);
+		const fileTreeDataProvider = new TreeProvider(Array.from(serviceWithUsages.values()));
 		vscode.window.createTreeView(
 			"elementUsageExplorer",
 			{

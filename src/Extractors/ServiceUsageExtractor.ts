@@ -59,7 +59,7 @@ export class ServiceUsageExtractor {
             }
         }
 
-        // Identify unused services
+        // this is a map that checks against the incoming services to see which one is used and which is  not used.
         const unusedServices = new Map<string, Component>();
         for (const [serviceName, service] of this.services.entries()) {
             if (!usedServices.has(serviceName)) {

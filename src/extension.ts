@@ -69,8 +69,8 @@ export function activate(context: vscode.ExtensionContext) {
 		const usageExtractor = new ServiceUsageExtractor(workspaceFolder.uri.fsPath, servicesFound.project, servicesFound.services);
 		var serviceWithUsages = await usageExtractor.findUsedServices();
 
-		console.log(`[Angular Service Finder] found ${serviceWithUsages.size} with no references`);
-		const fileTreeDataProvider = new TreeProvider(Array.from(serviceWithUsages.values()));
+		console.log(`[Angular Service Finder] found ${serviceWithUsages.injectedButUnused.size} Injected But not used and ${serviceWithUsages.unusedServices.size} Unused Services with no references`);
+		const fileTreeDataProvider = new TreeProvider(Array.from(serviceWithUsages.unusedServices.values()));
 		vscode.window.createTreeView(
 			"elementUsageExplorer",
 			{
